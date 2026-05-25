@@ -4,6 +4,9 @@ import java.util.List;
 
 import org.neodatis.odb.ODBRuntimeException;
 
+import acceso.AccesoEntrenador;
+import acceso.AccesoEquipo;
+import acceso.AccesoEstadio;
 import entrada.Teclado;
 import modelo.Entrenador;
 import modelo.Equipo;
@@ -31,6 +34,12 @@ public class Principal {
 		List <Entrenador> listaEntrenadores;
 		List <Equipo> listaEquipos;
 		List <Estadio> listaEstadios;
+		Entrenador entrenador;
+		Equipo equipo;
+		Estadio estadio;
+		String nombre, ubicacion;
+		int partidosGanados, anhoFundacion, titulosGanados, capacidad;
+		double salario;
 		do {
 			menu();
 			opcion = Teclado.leerEntero("Elige una opción(0-4) ");
@@ -48,6 +57,7 @@ public class Principal {
 						System.out.println("\nVolviendo al menu...\n");
 						break;
 					case 1:
+						
 						break;
 					case 2:
 						break;
@@ -66,10 +76,22 @@ public class Principal {
 						System.out.println("\nVolviendo al menu...\n");
 						break;
 					case 1:
+						listaEntrenadores = AccesoEntrenador.consultarEntrenadores();
+						for(Entrenador en : listaEntrenadores) {
+							System.out.println(en.toString());
+						}
 						break;
 					case 2:
+						listaEquipos = AccesoEquipo.consultarEquipos();
+						for(Equipo eq : listaEquipos) {
+							System.out.println(eq.toString());
+						}
 						break;
 					case 3:
+						listaEstadios = AccesoEstadio.consultarEstadio();
+						for(Estadio es : listaEstadios) {
+							System.out.println(es.toString());
+						}
 						break;
 					default:
 						System.err.println("La opción de menú debe estar comprendida"

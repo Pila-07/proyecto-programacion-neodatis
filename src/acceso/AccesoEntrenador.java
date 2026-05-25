@@ -30,7 +30,7 @@ public class AccesoEntrenador {
 
 	}
 
-	public static List<Entrenador> consultarEntrenador() throws ODBRuntimeException {
+	public static List<Entrenador> consultarEntrenadores() throws ODBRuntimeException {
 		ODB odb = null;
 		try {
 			odb = ODBFactory.open("data\\futbol.db");
