@@ -9,6 +9,10 @@ import org.neodatis.odb.ODBRuntimeException;
 import org.neodatis.odb.OID;
 import org.neodatis.odb.Objects;
 import org.neodatis.odb.core.oid.OIDFactory;
+import org.neodatis.odb.core.query.IQuery;
+import org.neodatis.odb.core.query.criteria.ICriterion;
+import org.neodatis.odb.core.query.criteria.Where;
+import org.neodatis.odb.impl.core.query.criteria.CriteriaQuery;
 
 import entrada.Teclado;
 import modelo.Equipo;
@@ -88,4 +92,27 @@ public class AccesoEstadio {
             }
         }
     }
+    
+    public static String consultarEstadioPorEstadio(String equipo) throws ODBRuntimeException {
+		ODB odb = null;
+		OID oid = null;
+		try {
+			odb = ODBFactory.open("data\\futbol.db");
+			ICriterion criterio = Where.equal("estadio.nombre", equipo);
+			IQuery consulta = new CriteriaQuery(Estadio.class, criterio);
+			Objects<Estadio> coleccionEstadios = odb.getObjects(consulta);			
+			if (!coleccionEstadios.hasNext()) {
+				return null;
+			}
+			else {
+				Estadio estadio = coleccionEstadios.next();
+				oid = odb.getObjectId(estadio);
+			}
+			return oid.toString();
+		}finally {
+			if(odb!=null) {
+				odb.close();
+			}
+		}
+	}
 }
