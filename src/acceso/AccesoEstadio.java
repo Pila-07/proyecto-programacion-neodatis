@@ -93,7 +93,7 @@ public class AccesoEstadio {
         }
     }
     
-    public static String consultarEstadioPorEstadio(String equipo) throws ODBRuntimeException {
+    public static String consultarEstadioPorEquipo(String equipo) throws ODBRuntimeException {
 		ODB odb = null;
 		OID oid = null;
 		try {

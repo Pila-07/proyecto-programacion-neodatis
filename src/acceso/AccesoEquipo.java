@@ -84,5 +84,18 @@ public class AccesoEquipo {
 			}
 		}
 	}
+	
+	public static int getOID(Equipo equipo) throws ODBRuntimeException {
+		ODB odb = null;
+		try {
+			odb = ODBFactory.open("data\\futbol.db");
+			int oid = Integer.parseInt(odb.getObjectId(equipo).toString());
+			return oid;
+		} finally {
+			if (odb != null) {
+				odb.close();
+			}
+		}
+	}
 
 }
