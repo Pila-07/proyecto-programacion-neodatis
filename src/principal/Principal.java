@@ -15,7 +15,6 @@ import modelo.Estadio;
 public class Principal {
  
 	private static void menu() {
-		System.out.println("=== GESTIÓN DE FÚTBOL - NeoDatis ===");
 		System.out.println("(0) Salir.");
 		System.out.println("(1) Insertar.");
 		System.out.println("(2) Consultar.");
@@ -172,7 +171,7 @@ public class Principal {
 						codigo = Teclado.leerEntero("OID del entrenador a modificar: ");
 						nombre = Teclado.leerCadena("Nuevo nombre: ");
 						partidosGanados = Teclado.leerEntero("Nuevos partidos ganados: ");
-						salario = Teclado.leerDouble("Nuevo salario: ");
+						salario = Teclado.leerReal("Nuevo salario: ");
 						entrenador = new Entrenador(nombre, partidosGanados, salario);
 						AccesoEntrenador.actualizarEntrenador(entrenador, codigo);
 						System.out.println("\nEntrenador actualizado correctamente.\n");
