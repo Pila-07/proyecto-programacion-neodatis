@@ -48,17 +48,9 @@ public class Principal {
 			System.out.println();
 			try {
 				switch (opcion) {
- 
-				// ========================
-				// SALIR
-				// ========================
 				case 0:
 					System.out.println("Programa finalizado.");
 					break;
- 
-				// ========================
-				// INSERTAR
-				// ========================
 				case 1:
 					menuClases();
 					opcionClase = Teclado.leerEntero("Elige una opción (0-3): ");
@@ -70,7 +62,7 @@ public class Principal {
 					case 1: // Insertar Entrenador
 						nombre = Teclado.leerCadena("Nombre del entrenador: ");
 						partidosGanados = Teclado.leerEntero("Partidos ganados: ");
-						salario = Teclado.leerDouble("Salario: ");
+						salario = Teclado.leerReal("Salario: ");
 						entrenador = new Entrenador(nombre, partidosGanados, salario);
 						codigo = AccesoEntrenador.insertarEntrenador(entrenador);
 						System.out.println("\nEntrenador insertado con OID: " + codigo + "\n");
