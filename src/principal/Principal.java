@@ -15,7 +15,6 @@ import modelo.Estadio;
 public class Principal {
  
 	private static void menu() {
-		System.out.println("=== GESTIÓN DE FÚTBOL - NeoDatis ===");
 		System.out.println("(0) Salir.");
 		System.out.println("(1) Insertar.");
 		System.out.println("(2) Consultar.");
