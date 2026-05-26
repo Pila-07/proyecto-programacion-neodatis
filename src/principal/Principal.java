@@ -1,5 +1,6 @@
 package principal;
  
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -316,12 +317,13 @@ public class Principal {
 							}
 							listaEquipos = AccesoEquipo.consultarEquipos();
 							boolean entrenadorReferenciado = false;
-							for (Equipo eq : listaEquipos) {
+							Iterator<Equipo> itEquipos = listaEquipos.iterator();
+							while (itEquipos.hasNext() && !entrenadorReferenciado) {
+							    Equipo eq = itEquipos.next();
 							    if (eq.getEntrenador() != null &&
 							            eq.getEntrenador().getNombre().equals(
 							            mapaEntrenadores.get(codigo).getNombre())) {
 							        entrenadorReferenciado = true;
-							        break;
 							    }
 							}
 							if (entrenadorReferenciado) {
@@ -351,12 +353,13 @@ public class Principal {
 							}
 							listaEstadios = AccesoEstadio.consultarEstadios();
 							boolean equipoReferenciado = false;
-							for (Estadio es : listaEstadios) {
+							Iterator<Estadio> itEstadios = listaEstadios.iterator();
+							while (itEstadios.hasNext() && !equipoReferenciado) {
+							    Estadio es = itEstadios.next();
 							    if (es.getEquipo() != null &&
 							            es.getEquipo().getNombre().equals(
 							            mapaEquipos.get(codigo).getNombre())) {
 							        equipoReferenciado = true;
-							        break;
 							    }
 							}
 							if (equipoReferenciado) {
