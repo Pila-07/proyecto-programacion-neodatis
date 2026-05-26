@@ -1,7 +1,8 @@
 package principal;
  
 import java.util.List;
- 
+import java.util.Map;
+
 import org.neodatis.odb.ODBRuntimeException;
  
 import acceso.AccesoEntrenador;
@@ -34,9 +35,12 @@ public class Principal {
 		List<Entrenador> listaEntrenadores;
 		List<Equipo> listaEquipos;
 		List<Estadio> listaEstadios;
-		Entrenador entrenador;
-		Equipo equipo;
-		Estadio estadio;
+		Map<Integer, Entrenador> mapaEntrenadores;
+		Map<Integer, Equipo> mapaEquipos;
+		Map<Integer, Estadio> mapaEstadios;
+		Entrenador entrenador = null;
+		Equipo equipo = null;
+		Estadio estadio = null;
 		String nombre, ubicacion;
 		int partidosGanados, anhoFundacion, titulosGanados, capacidad, codigo, codigoEntrenador, codigoEquipo;
 		double salario;
@@ -72,14 +76,18 @@ public class Principal {
 						anhoFundacion = Teclado.leerEntero("Año de fundación: ");
 						titulosGanados = Teclado.leerEntero("Títulos ganados: ");
 						System.out.println("\nEntrenadores disponibles:");
-						listaEntrenadores = AccesoEntrenador.consultarEntrenadores();
-						for (Entrenador en : listaEntrenadores) {
-							System.out.println("  OID " + AccesoEntrenador.getOID(en) + " -> " + en.toString());
+						mapaEntrenadores = AccesoEntrenador.consultarEntrenadoresConOID();
+						System.out.println("\nEntrenadores disponibles:");
+						for (Map.Entry<Integer, Entrenador> entrada : mapaEntrenadores.entrySet()) {
+						    System.out.println("  OID " + entrada.getKey() + " -> " + entrada.getValue());
 						}
-						codigoEntrenador = Teclado.leerEntero("OID del entrenador para este equipo: ");
-						entrenador = AccesoEntrenador.consultarEntrenadorPorOID(codigoEntrenador);
-						equipo = new Equipo(nombre, anhoFundacion, titulosGanados, entrenador);
-						codigo = AccesoEquipo.insertarEquipo(equipo);
+						codigo = Teclado.leerEntero("OID del entrenador: ");
+						for (Map.Entry<Integer, Entrenador> entrada : mapaEntrenadores.entrySet()) {
+							if(mapaEntrenadores.containsKey(codigo)) {
+								entrenador = entrada.getValue();
+							}
+						}
+						codigo = AccesoEquipo.insertarEquipo(nombre, anhoFundacion, titulosGanados, codigo);
 						System.out.println("\nEquipo insertado con OID: " + codigo + "\n");
 						break;
  
@@ -88,14 +96,15 @@ public class Principal {
 						ubicacion = Teclado.leerCadena("Ubicación: ");
 						capacidad = Teclado.leerEntero("Capacidad (aforo): ");
 						System.out.println("\nEquipos disponibles:");
-						listaEquipos = AccesoEquipo.consultarEquipos();
-						for (Equipo eq : listaEquipos) {
-							System.out.println("  OID " + AccesoEquipo.getOID(eq) + " -> " + eq.getNombre());
+						mapaEquipos = AccesoEquipo.consultarEquiposConOID();
+						System.out.println("\nEquipos disponibles:");
+						for (Map.Entry<Integer, Equipo> entrada : mapaEquipos.entrySet()) {
+						    System.out.println("  OID " + entrada.getKey() + " -> " + entrada.getValue());
 						}
-						codigoEquipo = Teclado.leerEntero("OID del equipo para este estadio: ");
-						equipo = AccesoEquipo.consultarEquipoPorOID(codigoEquipo);
+						codigo = Teclado.leerEntero("OID del entrenador: ");
+						
 						estadio = new Estadio(nombre, ubicacion, capacidad, equipo);
-						codigo = AccesoEstadio.insertarEstadio(estadio);
+						codigo = AccesoEstadio.insertarEstadio(nombre, ubicacion, capacidad, codigo);
 						System.out.println("\nEstadio insertado con OID: " + codigo + "\n");
 						break;
  
@@ -138,7 +147,7 @@ public class Principal {
 						break;
  
 					case 3: // Consultar Estadios
-						listaEstadios = AccesoEstadio.consultarEstadio();
+						listaEstadios = AccesoEstadio.consultarEstadios();
 						if (listaEstadios.isEmpty()) {
 							System.out.println("\nNo hay estadios registrados.\n");
 						} else {
@@ -199,7 +208,7 @@ public class Principal {
 						break;
  
 					case 3: // Modificar Estadio
-						listaEstadios = AccesoEstadio.consultarEstadio();
+						listaEstadios = AccesoEstadio.consultarEstadios();
 						System.out.println("\nEstadios disponibles:");
 						for (Estadio es : listaEstadios) {
 							System.out.println("  " + es.toString());
@@ -232,10 +241,10 @@ public class Principal {
 						break;
  
 					case 1: // Eliminar Entrenador
-						listaEntrenadores = AccesoEntrenador.consultarEntrenadores();
+						mapaEntrenadores = AccesoEntrenador.consultarEntrenadoresConOID();
 						System.out.println("\nEntrenadores disponibles:");
-						for (Entrenador en : listaEntrenadores) {
-							System.out.println("  " + en.toString());
+						for (Map.Entry<Integer, Entrenador> entrada : mapaEntrenadores.entrySet()) {
+						    System.out.println("  OID " + entrada.getKey() + " -> " + entrada.getValue());
 						}
 						codigo = Teclado.leerEntero("OID del entrenador a eliminar: ");
 						AccesoEntrenador.eliminarEntrenador(codigo);
@@ -243,10 +252,10 @@ public class Principal {
 						break;
  
 					case 2: // Eliminar Equipo
-						listaEquipos = AccesoEquipo.consultarEquipos();
-						System.out.println("\nEquipos disponibles:");
-						for (Equipo eq : listaEquipos) {
-							System.out.println("  " + eq.toString());
+						mapaEquipos = AccesoEquipo.consultarEquiposConOID();
+						System.out.println("\nEntrenadores disponibles:");
+						for (Map.Entry<Integer, Equipo> entrada : mapaEquipos.entrySet()) {
+						    System.out.println("  OID " + entrada.getKey() + " -> " + entrada.getValue());
 						}
 						codigo = Teclado.leerEntero("OID del equipo a eliminar: ");
 						AccesoEquipo.eliminarEquipo(codigo);
@@ -254,10 +263,10 @@ public class Principal {
 						break;
  
 					case 3: // Eliminar Estadio
-						listaEstadios = AccesoEstadio.consultarEstadio();
+						mapaEstadios = AccesoEstadio.consultarEstadiosConOID();
 						System.out.println("\nEstadios disponibles:");
-						for (Estadio es : listaEstadios) {
-							System.out.println("  " + es.toString());
+						for (Map.Entry<Integer, Estadio> entrada : mapaEstadios.entrySet()) {
+						    System.out.println("  OID " + entrada.getKey() + " -> " + entrada.getValue());
 						}
 						codigo = Teclado.leerEntero("OID del estadio a eliminar: ");
 						AccesoEstadio.eliminarEstadio(codigo);

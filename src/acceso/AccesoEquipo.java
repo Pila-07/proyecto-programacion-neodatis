@@ -1,7 +1,9 @@
 package acceso;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.neodatis.odb.ODB;
 import org.neodatis.odb.ODBFactory;
@@ -15,17 +17,19 @@ import modelo.Equipo;
 
 public class AccesoEquipo {
 	
-	public static int insertarEquipo(Equipo equipo) throws ODBRuntimeException{
-		ODB odb = null;
-		try {
-			odb = ODBFactory.open("data\\futbol.db");
-			OID oid = odb.store(equipo);
-			return Integer.parseInt(oid.toString());
-		} finally {
-			if (odb != null) {
-				odb.close();
-			}
-		}
+	public static int insertarEquipo(String nombre, int anhoFundacion,
+	        int titulosGanados, int codigoEntrenador) throws ODBRuntimeException {
+	    ODB odb = null;
+	    try {
+	        odb = ODBFactory.open("data\\futbol.db");
+	        OID oidEntrenador = OIDFactory.buildObjectOID(codigoEntrenador);
+	        Entrenador entrenador = (Entrenador) odb.getObjectFromId(oidEntrenador);
+	        Equipo equipo = new Equipo(nombre, anhoFundacion, titulosGanados, entrenador);
+	        OID oid = odb.store(equipo);
+	        return Integer.parseInt(oid.toString());
+	    } finally {
+	        if (odb != null) odb.close();
+	    }
 	}
 	
 	public static List <Equipo> consultarEquipos() throws ODBRuntimeException{
@@ -100,17 +104,21 @@ public class AccesoEquipo {
 		}
 	}
 	
-	public static int getOID(Equipo equipo) throws ODBRuntimeException {
-		ODB odb = null;
-		try {
-			odb = ODBFactory.open("data\\futbol.db");
-			int oid = Integer.parseInt(odb.getObjectId(equipo).toString());
-			return oid;
-		} finally {
-			if (odb != null) {
-				odb.close();
-			}
-		}
+	public static Map<Integer, Equipo> consultarEquiposConOID() throws ODBRuntimeException {
+	    ODB odb = null;
+	    try {
+	        odb = ODBFactory.open("data\\futbol.db");
+	        Objects<Equipo> col = odb.getObjects(Equipo.class);
+	        Map<Integer, Equipo> mapa = new LinkedHashMap<Integer, Equipo>();
+	        while (col.hasNext()) {
+	            Equipo equipo = col.next();
+	            int oid = Integer.parseInt(odb.getObjectId(equipo).toString());
+	            mapa.put(oid, equipo);
+	        }
+	        return mapa;
+	    } finally {
+	        if (odb != null) odb.close();
+	    }
 	}
 
 }
