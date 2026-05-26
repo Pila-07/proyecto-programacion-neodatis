@@ -112,7 +112,6 @@ public class Principal {
 							for (Map.Entry<Integer, Equipo> entrada : mapaEquipos.entrySet()) {
 							    System.out.println("  OID " + entrada.getKey() + " -> " + entrada.getValue());
 							}
-							
 							equipo = null;
 							while (equipo == null) {
 								codigoEquipo = Teclado.leerEntero("OID del equipo: ");
