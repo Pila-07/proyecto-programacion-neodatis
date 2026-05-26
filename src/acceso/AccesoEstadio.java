@@ -1,7 +1,9 @@
 package acceso;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.neodatis.odb.ODB;
 import org.neodatis.odb.ODBFactory;
@@ -22,18 +24,20 @@ public class AccesoEstadio {
 
     //insertar, consultar, actualizar, eliminar
     
-    public static int insertarEstadio(Estadio estadio) throws ODBRuntimeException {
-        ODB odb = null;
-        try {
-            odb = ODBFactory.open("data\\futbol.db");
-            OID oid = odb.store(estadio);
-            return Integer.parseInt(oid.toString());
-        } finally {
-            if (odb != null) {
-                odb.close();
-            }
-        }
-    } 
+	public static int insertarEstadio(String nombre, String ubicacion,
+	        int capacidad, int codigoEquipo) throws ODBRuntimeException {
+	    ODB odb = null;
+	    try {
+	        odb = ODBFactory.open("data\\futbol.db");
+	        OID oidEquipo = OIDFactory.buildObjectOID(codigoEquipo);
+	        Equipo equipo = (Equipo) odb.getObjectFromId(oidEquipo);
+	        Estadio estadio = new Estadio(nombre, ubicacion, capacidad, equipo);
+	        OID oid = odb.store(estadio);
+	        return Integer.parseInt(oid.toString());
+	    } finally {
+	        if (odb != null) odb.close();
+	    }
+	}
     
     public static int eliminarEstadio(int codigo) throws ODBRuntimeException {
         ODB odb = null;
@@ -50,10 +54,10 @@ public class AccesoEstadio {
             }
         }
     }
-    public static List <Estadio> consultarEstadio() throws ODBRuntimeException {
+    public static List <Estadio> consultarEstadios() throws ODBRuntimeException {
         ODB odb = null;
         try {
-            odb = ODBFactory.open("data\\personal.db");
+            odb = ODBFactory.open("data\\futbol.db");
             Objects<Estadio> coleccionEstadios = odb.getObjects(Estadio.class);
             List<Estadio> listaEstadios = new ArrayList<Estadio>();
             
@@ -68,12 +72,29 @@ public class AccesoEstadio {
         }
     }
     
+    public static Map<Integer, Estadio> consultarEstadiosConOID() throws ODBRuntimeException {
+	    ODB odb = null;
+	    try {
+	        odb = ODBFactory.open("data\\futbol.db");
+	        Objects<Estadio> coleccionEstadios = odb.getObjects(Estadio.class);
+	        Map<Integer, Estadio> mapa = new LinkedHashMap<Integer, Estadio>();
+	        while (coleccionEstadios.hasNext()) {
+	        	Estadio estadio = coleccionEstadios.next();
+	            int oid = Integer.parseInt(odb.getObjectId(estadio).toString());
+	            mapa.put(oid, estadio);
+	        }
+	        return mapa;
+	    } finally {
+	        if (odb != null) odb.close();
+	    }
+	}
+    
     public static int actualizarEstadio(int codigoEstadio, int codigoEquipo, Estadio nuevoEstadio) throws ODBRuntimeException {
         ODB odb = null;
         OID oidEstadio = null;
         OID oidEquipo = null;
         try {
-            odb = ODBFactory.open("data\\personal.db");
+            odb = ODBFactory.open("data\\futbol.db");
             int codigo = Teclado.leerEntero("¿OID? ");
             oidEstadio = OIDFactory.buildObjectOID(codigo);
             Estadio estadio = (Estadio) odb.getObjectFromId(oidEstadio);
@@ -93,22 +114,18 @@ public class AccesoEstadio {
         }
     }
     
-    public static String consultarEstadioPorEquipo(String equipo) throws ODBRuntimeException {
+    public static Estadio consultarEstadioPorEquipo(String equipo) throws ODBRuntimeException {
 		ODB odb = null;
-		OID oid = null;
+		Estadio estadio = null;
 		try {
 			odb = ODBFactory.open("data\\futbol.db");
 			ICriterion criterio = Where.equal("estadio.nombre", equipo);
 			IQuery consulta = new CriteriaQuery(Estadio.class, criterio);
 			Objects<Estadio> coleccionEstadios = odb.getObjects(consulta);			
-			if (!coleccionEstadios.hasNext()) {
-				return null;
+			if (coleccionEstadios.hasNext()) {
+				estadio = coleccionEstadios.next();
 			}
-			else {
-				Estadio estadio = coleccionEstadios.next();
-				oid = odb.getObjectId(estadio);
-			}
-			return oid.toString();
+			return estadio;
 		}finally {
 			if(odb!=null) {
 				odb.close();
