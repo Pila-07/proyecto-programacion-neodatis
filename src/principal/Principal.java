@@ -314,8 +314,23 @@ public class Principal {
 									System.out.println("\nNo existe ningún entrenador con ese OID\n");
 								}
 							}
-							AccesoEntrenador.eliminarEntrenador(codigo);
-							System.out.println("\nEntrenador eliminado correctamente.\n");
+							listaEquipos = AccesoEquipo.consultarEquipos();
+							boolean entrenadorReferenciado = false;
+							for (Equipo eq : listaEquipos) {
+							    if (eq.getEntrenador() != null &&
+							            eq.getEntrenador().getNombre().equals(
+							            mapaEntrenadores.get(codigo).getNombre())) {
+							        entrenadorReferenciado = true;
+							        break;
+							    }
+							}
+							if (entrenadorReferenciado) {
+							    System.out.println("\nNo se puede eliminar: el entrenador "
+							            + "está asignado a un equipo.\n");
+							} else {
+							    AccesoEntrenador.eliminarEntrenador(codigo);
+							    System.out.println("\nEntrenador eliminado correctamente.\n");
+							}
 						} else {
 							System.out.println("\nNo hay entrenadores registrados.\n");
 						}
@@ -334,8 +349,23 @@ public class Principal {
 									System.out.println("\nNo existe ningún equipo con ese OID\n");
 								}
 							}
-							AccesoEquipo.eliminarEquipo(codigo);
-							System.out.println("\nEquipo eliminado correctamente.\n");
+							listaEstadios = AccesoEstadio.consultarEstadios();
+							boolean equipoReferenciado = false;
+							for (Estadio es : listaEstadios) {
+							    if (es.getEquipo() != null &&
+							            es.getEquipo().getNombre().equals(
+							            mapaEquipos.get(codigo).getNombre())) {
+							        equipoReferenciado = true;
+							        break;
+							    }
+							}
+							if (equipoReferenciado) {
+							    System.out.println("\nNo se puede eliminar: el equipo "
+							            + "está asignado a un estadio.\n");
+							} else {
+							    AccesoEquipo.eliminarEquipo(codigo);
+							    System.out.println("\nEquipo eliminado correctamente.\n");
+							}
 						}else {
 							System.out.println("\nNo hay equipos registrados.\n");
 						}

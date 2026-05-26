@@ -35,6 +35,10 @@ public class Equipo {
 		return titulosGanados;
 	}
 
+	public Entrenador getEntrenador() {
+		return entrenador;
+	}
+
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
 	}
