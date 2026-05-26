@@ -11,13 +11,17 @@ import org.neodatis.odb.ODBRuntimeException;
 import org.neodatis.odb.OID;
 import org.neodatis.odb.Objects;
 import org.neodatis.odb.core.oid.OIDFactory;
+import org.neodatis.odb.core.query.IQuery;
+import org.neodatis.odb.core.query.criteria.ICriterion;
+import org.neodatis.odb.core.query.criteria.Where;
+import org.neodatis.odb.impl.core.query.criteria.CriteriaQuery;
 
 import modelo.Entrenador;
+import modelo.Estadio;
 
 public class AccesoEntrenador {
 
 	public static int insertarEntrenador(Entrenador entrenador) {
-		// pasarle objeto como parametro
 		ODB odb = null;
 		try {
 			odb = ODBFactory.open("data\\futbol.db");
@@ -98,6 +102,25 @@ public class AccesoEntrenador {
 			odb.store(entrenador);
 		} finally {
 			if (odb != null) {
+				odb.close();
+			}
+		}
+	}
+	
+	public static List <Entrenador> consultarEntrenadorPorSalario(Double salario) throws ODBRuntimeException {
+		ODB odb = null;
+		List <Entrenador> listaEntrenadores = new ArrayList <Entrenador>();
+		try {
+			odb = ODBFactory.open("data\\futbol.db");
+			ICriterion criterio = Where.ge("salario", salario);
+			IQuery consulta = new CriteriaQuery(Entrenador.class, criterio);
+			Objects<Entrenador> coleccionEntrenadores = odb.getObjects(consulta);			
+			while (coleccionEntrenadores.hasNext()) {
+				listaEntrenadores.add(coleccionEntrenadores.next());
+			}
+			return listaEntrenadores;
+		}finally {
+			if(odb!=null) {
 				odb.close();
 			}
 		}

@@ -112,12 +112,12 @@ public class AccesoEstadio {
         }
     }
     
-    public static Estadio consultarEstadioPorEquipo(String equipo) throws ODBRuntimeException {
+    public static Estadio consultarEstadioPorEquipo(Equipo equipo) throws ODBRuntimeException {
 		ODB odb = null;
 		Estadio estadio = null;
 		try {
 			odb = ODBFactory.open("data\\futbol.db");
-			ICriterion criterio = Where.equal("equipo.nombre", equipo);
+			ICriterion criterio = Where.equal("equipo.nombre", equipo.getNombre());
 			IQuery consulta = new CriteriaQuery(Estadio.class, criterio);
 			Objects<Estadio> coleccionEstadios = odb.getObjects(consulta);			
 			if (coleccionEstadios.hasNext()) {

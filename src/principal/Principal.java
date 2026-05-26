@@ -132,7 +132,9 @@ public class Principal {
 					break;
 				case 2:
 					menuClases();
-					opcionClase = Teclado.leerEntero("Elige una opción (0-3): ");
+					System.out.println("(4) Consultar estadio por equipo.");
+					System.out.println("(5) Consultar entrenadores por salario.");
+					opcionClase = Teclado.leerEntero("Elige una opción (0-5): ");
 					switch (opcionClase) {
 					case 0:
 						System.out.println("\nVolviendo al menú...\n");
@@ -173,7 +175,47 @@ public class Principal {
 							System.out.println();
 						}
 						break;
- 
+					case 4:
+						mapaEquipos = AccesoEquipo.consultarEquiposConOID();
+						if (!mapaEquipos.isEmpty()) {
+							System.out.println("\nEquipos disponibles:");
+							for (Map.Entry<Integer, Equipo> entrada : mapaEquipos.entrySet()) {
+							    System.out.println("  OID " + entrada.getKey() + " -> " + entrada.getValue());
+							}
+							equipo = null;
+							while (equipo == null) {
+								codigoEquipo = Teclado.leerEntero("OID del equipo: ");
+								if (mapaEquipos.containsKey(codigoEquipo)) {
+									equipo = mapaEquipos.get(codigoEquipo);
+								} else {
+									System.out.println("\nNo existe ningún equipo con ese OID\n");
+								}
+							}
+							estadio = AccesoEstadio.consultarEstadioPorEquipo(equipo);
+							if (estadio == null) {
+								System.out.println("\nNo se ha encontrado ningún estadio.\n");
+							} else {
+								System.out.println("\n" + estadio.toString() + "\n");
+							}
+						} else {
+							System.out.println("\nNo hay equipos registrados. "
+									+ "Inserte un nuevo registro para continuar.\n");
+						}
+						break;
+					case 5:
+						salario = Teclado.leerReal("Salario: ");
+						listaEntrenadores = AccesoEntrenador.consultarEntrenadorPorSalario(salario);
+						if (listaEntrenadores.isEmpty()) {
+							System.out.println("\nNo se encontraron entrenadores con estos criterios.\n");
+						} else {
+							System.out.println("\n--- ENTRENADORES CON SALARIO IGUAL O MAYOR A " 
+									+ salario + " ---");
+							for (Entrenador en : listaEntrenadores) {
+								System.out.println(en.toString());
+							}
+							System.out.println();
+						}
+						break;
 					default:
 						System.err.println("Opción no válida.\n");
 					}
