@@ -78,27 +78,24 @@ public class Principal {
 						anhoFundacion = Teclado.leerEntero("Año de fundación: ");
 						titulosGanados = Teclado.leerEntero("Títulos ganados: ");
 						mapaEntrenadores = AccesoEntrenador.consultarEntrenadoresConOID();
-						if(!mapaEntrenadores.isEmpty()) {
+						if (!mapaEntrenadores.isEmpty()) {
 							System.out.println("\nEntrenadores disponibles:");
 							for (Map.Entry<Integer, Entrenador> entrada : mapaEntrenadores.entrySet()) {
 							    System.out.println("  OID " + entrada.getKey() + " -> " + entrada.getValue());
 							}
 							entrenador = null;
-							while(entrenador == null){
+							while (entrenador == null) {
 								codigoEntrenador = Teclado.leerEntero("OID del entrenador: ");
-								for (Map.Entry<Integer, Entrenador> entrada : mapaEntrenadores.entrySet()) {
-									if(mapaEntrenadores.containsKey(codigoEntrenador)) {
-										entrenador = entrada.getValue();
-									}
-								}
-								if(entrenador == null) {
+								if (mapaEntrenadores.containsKey(codigoEntrenador)) {
+									entrenador = mapaEntrenadores.get(codigoEntrenador);
+								} else {
 									System.out.println("\nNo existe ningún "
 											+ "entrenador con ese OID\n");
 								}
 							}
 							codigo = AccesoEquipo.insertarEquipo(nombre, anhoFundacion, titulosGanados, codigoEntrenador);
 							System.out.println("\nEquipo insertado con OID: " + codigo + "\n");
-						}else {
+						} else {
 							System.out.println("\nNo hay entrenadores registrados. "
 									+ "Inserte un nuevo registro para continuar.\n");
 						}
@@ -108,18 +105,27 @@ public class Principal {
 						nombre = Teclado.leerCadena("Nombre del estadio: ");
 						ubicacion = Teclado.leerCadena("Ubicación: ");
 						capacidad = Teclado.leerEntero("Capacidad (aforo): ");
-						System.out.println("\nEquipos disponibles:");
 						mapaEquipos = AccesoEquipo.consultarEquiposConOID();
-						if(mapaEquipos.isEmpty()) {
+						
+						if (!mapaEquipos.isEmpty()) {
 							System.out.println("\nEquipos disponibles:");
 							for (Map.Entry<Integer, Equipo> entrada : mapaEquipos.entrySet()) {
 							    System.out.println("  OID " + entrada.getKey() + " -> " + entrada.getValue());
 							}
-							codigoEquipo = Teclado.leerEntero("OID del entrenador: ");
-							estadio = new Estadio(nombre, ubicacion, capacidad, equipo);
+							
+							equipo = null;
+							while (equipo == null) {
+								codigoEquipo = Teclado.leerEntero("OID del equipo: ");
+								if (mapaEquipos.containsKey(codigoEquipo)) {
+									equipo = mapaEquipos.get(codigoEquipo);
+								} else {
+									System.out.println("\nNo existe ningún "
+											+ "equipo con ese OID\n");
+								}
+							}
 							codigo = AccesoEstadio.insertarEstadio(nombre, ubicacion, capacidad, codigoEquipo);
 							System.out.println("\nEstadio insertado con OID: " + codigo + "\n");
-						}else {
+						} else {
 							System.out.println("\nNo hay equipos registrados. "
 									+ "Inserte un nuevo registro para continuar.\n");
 						}
@@ -189,12 +195,24 @@ public class Principal {
 						break;
  
 					case 1: // Modificar Entrenador
-						listaEntrenadores = AccesoEntrenador.consultarEntrenadores();
-						System.out.println("\nEntrenadores disponibles:");
-						for (Entrenador en : listaEntrenadores) {
-							System.out.println("  " + en.toString());
+						
+						mapaEntrenadores = AccesoEntrenador.consultarEntrenadoresConOID();
+						if (mapaEntrenadores.isEmpty()) {
+							System.out.println("\nNo hay entrenadores registrados.\n");
+							break;
 						}
-						codigo = Teclado.leerEntero("OID del entrenador a modificar: ");
+						System.out.println("\nEntrenadores disponibles:");
+						for (Map.Entry<Integer, Entrenador> entrada : mapaEntrenadores.entrySet()) {
+							System.out.println("  OID " + entrada.getKey() + " -> " + entrada.getValue());
+						}
+						
+						codigo = 0;
+						while (!mapaEntrenadores.containsKey(codigo)) {
+							codigo = Teclado.leerEntero("OID del entrenador a modificar: ");
+							if (!mapaEntrenadores.containsKey(codigo)) {
+								System.out.println("\nNo existe ningún entrenador con ese OID\n");
+							}
+						}
 						nombre = Teclado.leerCadena("Nuevo nombre: ");
 						partidosGanados = Teclado.leerEntero("Nuevos partidos ganados: ");
 						salario = Teclado.leerReal("Nuevo salario: ");
@@ -204,42 +222,88 @@ public class Principal {
 						break;
  
 					case 2: // Modificar Equipo
-						listaEquipos = AccesoEquipo.consultarEquipos();
-						System.out.println("\nEquipos disponibles:");
-						for (Equipo eq : listaEquipos) {
-							System.out.println("  " + eq.toString());
+						
+						mapaEquipos = AccesoEquipo.consultarEquiposConOID();
+						if (mapaEquipos.isEmpty()) {
+							System.out.println("\nNo hay equipos registrados.\n");
+							break;
 						}
-						codigo = Teclado.leerEntero("OID del equipo a modificar: ");
+						System.out.println("\nEquipos disponibles:");
+						for (Map.Entry<Integer, Equipo> entrada : mapaEquipos.entrySet()) {
+							System.out.println("  OID " + entrada.getKey() + " -> " + entrada.getValue());
+						}
+						
+						codigo = 0;
+						while (!mapaEquipos.containsKey(codigo)) {
+							codigo = Teclado.leerEntero("OID del equipo a modificar: ");
+							if (!mapaEquipos.containsKey(codigo)) {
+								System.out.println("\nNo existe ningún equipo con ese OID\n");
+							}
+						}
 						nombre = Teclado.leerCadena("Nuevo nombre del equipo: ");
 						anhoFundacion = Teclado.leerEntero("Nuevo año de fundación: ");
 						titulosGanados = Teclado.leerEntero("Nuevos títulos ganados: ");
-						listaEntrenadores = AccesoEntrenador.consultarEntrenadores();
-						System.out.println("\nEntrenadores disponibles:");
-						for (Entrenador en : listaEntrenadores) {
-							System.out.println("  " + en.toString());
+						mapaEntrenadores = AccesoEntrenador.consultarEntrenadoresConOID();
+						if (mapaEntrenadores.isEmpty()) {
+							System.out.println("\nNo hay entrenadores registrados.\n");
+							break;
 						}
-						codigoEntrenador = Teclado.leerEntero("OID del nuevo entrenador: ");
+						System.out.println("\nEntrenadores disponibles:");
+						for (Map.Entry<Integer, Entrenador> entrada : mapaEntrenadores.entrySet()) {
+							System.out.println("  OID " + entrada.getKey() + " -> " + entrada.getValue());
+						}
+						
+						codigoEntrenador = 0;
+						while (!mapaEntrenadores.containsKey(codigoEntrenador)) {
+							codigoEntrenador = Teclado.leerEntero("OID del nuevo entrenador: ");
+							if (!mapaEntrenadores.containsKey(codigoEntrenador)) {
+								System.out.println("\nNo existe ningún entrenador con ese OID\n");
+							}
+						}
 						equipo = new Equipo(nombre, anhoFundacion, titulosGanados, null);
 						AccesoEquipo.actualizarEquipo(codigo, equipo, codigoEntrenador);
 						System.out.println("\nEquipo actualizado correctamente.\n");
 						break;
  
 					case 3: // Modificar Estadio
-						listaEstadios = AccesoEstadio.consultarEstadios();
-						System.out.println("\nEstadios disponibles:");
-						for (Estadio es : listaEstadios) {
-							System.out.println("  " + es.toString());
+						
+						mapaEstadios = AccesoEstadio.consultarEstadiosConOID();
+						if (mapaEstadios.isEmpty()) {
+							System.out.println("\nNo hay estadios registrados.\n");
+							break;
 						}
-						codigo = Teclado.leerEntero("OID del estadio a modificar: ");
+						System.out.println("\nEstadios disponibles:");
+						for (Map.Entry<Integer, Estadio> entrada : mapaEstadios.entrySet()) {
+							System.out.println("  OID " + entrada.getKey() + " -> " + entrada.getValue());
+						}
+						
+						codigo = 0;
+						while (!mapaEstadios.containsKey(codigo)) {
+							codigo = Teclado.leerEntero("OID del estadio a modificar: ");
+							if (!mapaEstadios.containsKey(codigo)) {
+								System.out.println("\nNo existe ningún estadio con ese OID\n");
+							}
+						}
 						nombre = Teclado.leerCadena("Nuevo nombre del estadio: ");
 						ubicacion = Teclado.leerCadena("Nueva ubicación: ");
 						capacidad = Teclado.leerEntero("Nueva capacidad: ");
-						listaEquipos = AccesoEquipo.consultarEquipos();
-						System.out.println("\nEquipos disponibles:");
-						for (Equipo eq : listaEquipos) {
-							System.out.println("  " + eq.toString());
+						mapaEquipos = AccesoEquipo.consultarEquiposConOID();
+						if (mapaEquipos.isEmpty()) {
+							System.out.println("\nNo hay equipos registrados.\n");
+							break;
 						}
-						codigoEquipo = Teclado.leerEntero("OID del nuevo equipo: ");
+						System.out.println("\nEquipos disponibles:");
+						for (Map.Entry<Integer, Equipo> entrada : mapaEquipos.entrySet()) {
+							System.out.println("  OID " + entrada.getKey() + " -> " + entrada.getValue());
+						}
+						
+						codigoEquipo = 0;
+						while (!mapaEquipos.containsKey(codigoEquipo)) {
+							codigoEquipo = Teclado.leerEntero("OID del nuevo equipo: ");
+							if (!mapaEquipos.containsKey(codigoEquipo)) {
+								System.out.println("\nNo existe ningún equipo con ese OID\n");
+							}
+						}
 						estadio = new Estadio(nombre, ubicacion, capacidad, null);
 						AccesoEstadio.actualizarEstadio(codigo, codigoEquipo, estadio);
 						System.out.println("\nEstadio actualizado correctamente.\n");
@@ -259,33 +323,67 @@ public class Principal {
  
 					case 1: // Eliminar Entrenador
 						mapaEntrenadores = AccesoEntrenador.consultarEntrenadoresConOID();
+						if (mapaEntrenadores.isEmpty()) {
+							System.out.println("\nNo hay entrenadores registrados.\n");
+							break;
+						}
 						System.out.println("\nEntrenadores disponibles:");
 						for (Map.Entry<Integer, Entrenador> entrada : mapaEntrenadores.entrySet()) {
 						    System.out.println("  OID " + entrada.getKey() + " -> " + entrada.getValue());
 						}
-						codigo = Teclado.leerEntero("OID del entrenador a eliminar: ");
+						
+						codigo = 0;
+						while (!mapaEntrenadores.containsKey(codigo)) {
+							codigo = Teclado.leerEntero("OID del entrenador a eliminar: ");
+							if (!mapaEntrenadores.containsKey(codigo)) {
+								System.out.println("\nNo existe ningún entrenador con ese OID\n");
+							}
+						}
 						AccesoEntrenador.eliminarEntrenador(codigo);
 						System.out.println("\nEntrenador eliminado correctamente.\n");
 						break;
  
 					case 2: // Eliminar Equipo
 						mapaEquipos = AccesoEquipo.consultarEquiposConOID();
-						System.out.println("\nEntrenadores disponibles:");
+						if (mapaEquipos.isEmpty()) {
+							System.out.println("\nNo hay equipos registrados.\n");
+							break;
+						}
+						
+						System.out.println("\nEquipos disponibles:");
 						for (Map.Entry<Integer, Equipo> entrada : mapaEquipos.entrySet()) {
 						    System.out.println("  OID " + entrada.getKey() + " -> " + entrada.getValue());
 						}
-						codigo = Teclado.leerEntero("OID del equipo a eliminar: ");
+						
+						codigo = 0;
+						while (!mapaEquipos.containsKey(codigo)) {
+							codigo = Teclado.leerEntero("OID del equipo a eliminar: ");
+							if (!mapaEquipos.containsKey(codigo)) {
+								System.out.println("\nNo existe ningún equipo con ese OID\n");
+							}
+						}
 						AccesoEquipo.eliminarEquipo(codigo);
 						System.out.println("\nEquipo eliminado correctamente.\n");
 						break;
  
 					case 3: // Eliminar Estadio
 						mapaEstadios = AccesoEstadio.consultarEstadiosConOID();
+						if (mapaEstadios.isEmpty()) {
+							System.out.println("\nNo hay estadios registrados.\n");
+							break;
+						}
 						System.out.println("\nEstadios disponibles:");
 						for (Map.Entry<Integer, Estadio> entrada : mapaEstadios.entrySet()) {
 						    System.out.println("  OID " + entrada.getKey() + " -> " + entrada.getValue());
 						}
-						codigo = Teclado.leerEntero("OID del estadio a eliminar: ");
+					
+						codigo = 0;
+						while (!mapaEstadios.containsKey(codigo)) {
+							codigo = Teclado.leerEntero("OID del estadio a eliminar: ");
+							if (!mapaEstadios.containsKey(codigo)) {
+								System.out.println("\nNo existe ningún estadio con ese OID\n");
+							}
+						}
 						AccesoEstadio.eliminarEstadio(codigo);
 						System.out.println("\nEstadio eliminado correctamente.\n");
 						break;

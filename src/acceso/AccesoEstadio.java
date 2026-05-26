@@ -16,7 +16,6 @@ import org.neodatis.odb.core.query.criteria.ICriterion;
 import org.neodatis.odb.core.query.criteria.Where;
 import org.neodatis.odb.impl.core.query.criteria.CriteriaQuery;
 
-import entrada.Teclado;
 import modelo.Equipo;
 import modelo.Estadio;
 
@@ -54,6 +53,7 @@ public class AccesoEstadio {
             }
         }
     }
+
     public static List <Estadio> consultarEstadios() throws ODBRuntimeException {
         ODB odb = null;
         try {
@@ -95,13 +95,11 @@ public class AccesoEstadio {
         OID oidEquipo = null;
         try {
             odb = ODBFactory.open("data\\futbol.db");
-            int codigo = Teclado.leerEntero("¿OID? ");
-            oidEstadio = OIDFactory.buildObjectOID(codigo);
+            oidEstadio = OIDFactory.buildObjectOID(codigoEstadio);
             Estadio estadio = (Estadio) odb.getObjectFromId(oidEstadio);
             estadio.setNombre(nuevoEstadio.getNombre());
             estadio.setUbicacion(nuevoEstadio.getUbicacion());
             estadio.setCapacidad(nuevoEstadio.getCapacidad());
-            estadio.setEquipo(nuevoEstadio.getEquipo());
             oidEquipo = OIDFactory.buildObjectOID(codigoEquipo);
             Equipo equipo = (Equipo) odb.getObjectFromId(oidEquipo);
             estadio.setEquipo(equipo);
@@ -119,7 +117,7 @@ public class AccesoEstadio {
 		Estadio estadio = null;
 		try {
 			odb = ODBFactory.open("data\\futbol.db");
-			ICriterion criterio = Where.equal("estadio.nombre", equipo);
+			ICriterion criterio = Where.equal("equipo.nombre", equipo);
 			IQuery consulta = new CriteriaQuery(Estadio.class, criterio);
 			Objects<Estadio> coleccionEstadios = odb.getObjects(consulta);			
 			if (coleccionEstadios.hasNext()) {
