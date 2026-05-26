@@ -42,7 +42,9 @@ public class Principal {
 		Equipo equipo = null;
 		Estadio estadio = null;
 		String nombre, ubicacion;
-		int partidosGanados, anhoFundacion, titulosGanados, capacidad, codigo, codigoEntrenador, codigoEquipo;
+		int partidosGanados, anhoFundacion, titulosGanados, capacidad, codigo;
+		int codigoEntrenador = 0;
+		int codigoEquipo = 0;
 		double salario;
  
 		do {
@@ -75,20 +77,31 @@ public class Principal {
 						nombre = Teclado.leerCadena("Nombre del equipo: ");
 						anhoFundacion = Teclado.leerEntero("Año de fundación: ");
 						titulosGanados = Teclado.leerEntero("Títulos ganados: ");
-						System.out.println("\nEntrenadores disponibles:");
 						mapaEntrenadores = AccesoEntrenador.consultarEntrenadoresConOID();
-						System.out.println("\nEntrenadores disponibles:");
-						for (Map.Entry<Integer, Entrenador> entrada : mapaEntrenadores.entrySet()) {
-						    System.out.println("  OID " + entrada.getKey() + " -> " + entrada.getValue());
-						}
-						codigo = Teclado.leerEntero("OID del entrenador: ");
-						for (Map.Entry<Integer, Entrenador> entrada : mapaEntrenadores.entrySet()) {
-							if(mapaEntrenadores.containsKey(codigo)) {
-								entrenador = entrada.getValue();
+						if(!mapaEntrenadores.isEmpty()) {
+							System.out.println("\nEntrenadores disponibles:");
+							for (Map.Entry<Integer, Entrenador> entrada : mapaEntrenadores.entrySet()) {
+							    System.out.println("  OID " + entrada.getKey() + " -> " + entrada.getValue());
 							}
+							entrenador = null;
+							while(entrenador == null){
+								codigoEntrenador = Teclado.leerEntero("OID del entrenador: ");
+								for (Map.Entry<Integer, Entrenador> entrada : mapaEntrenadores.entrySet()) {
+									if(mapaEntrenadores.containsKey(codigoEntrenador)) {
+										entrenador = entrada.getValue();
+									}
+								}
+								if(entrenador == null) {
+									System.out.println("\nNo existe ningún "
+											+ "entrenador con ese OID\n");
+								}
+							}
+							codigo = AccesoEquipo.insertarEquipo(nombre, anhoFundacion, titulosGanados, codigoEntrenador);
+							System.out.println("\nEquipo insertado con OID: " + codigo + "\n");
+						}else {
+							System.out.println("\nNo hay entrenadores registrados. "
+									+ "Inserte un nuevo registro para continuar.\n");
 						}
-						codigo = AccesoEquipo.insertarEquipo(nombre, anhoFundacion, titulosGanados, codigo);
-						System.out.println("\nEquipo insertado con OID: " + codigo + "\n");
 						break;
  
 					case 3: // Insertar Estadio
@@ -97,15 +110,19 @@ public class Principal {
 						capacidad = Teclado.leerEntero("Capacidad (aforo): ");
 						System.out.println("\nEquipos disponibles:");
 						mapaEquipos = AccesoEquipo.consultarEquiposConOID();
-						System.out.println("\nEquipos disponibles:");
-						for (Map.Entry<Integer, Equipo> entrada : mapaEquipos.entrySet()) {
-						    System.out.println("  OID " + entrada.getKey() + " -> " + entrada.getValue());
+						if(mapaEquipos.isEmpty()) {
+							System.out.println("\nEquipos disponibles:");
+							for (Map.Entry<Integer, Equipo> entrada : mapaEquipos.entrySet()) {
+							    System.out.println("  OID " + entrada.getKey() + " -> " + entrada.getValue());
+							}
+							codigoEquipo = Teclado.leerEntero("OID del entrenador: ");
+							estadio = new Estadio(nombre, ubicacion, capacidad, equipo);
+							codigo = AccesoEstadio.insertarEstadio(nombre, ubicacion, capacidad, codigoEquipo);
+							System.out.println("\nEstadio insertado con OID: " + codigo + "\n");
+						}else {
+							System.out.println("\nNo hay equipos registrados. "
+									+ "Inserte un nuevo registro para continuar.\n");
 						}
-						codigo = Teclado.leerEntero("OID del entrenador: ");
-						
-						estadio = new Estadio(nombre, ubicacion, capacidad, equipo);
-						codigo = AccesoEstadio.insertarEstadio(nombre, ubicacion, capacidad, codigo);
-						System.out.println("\nEstadio insertado con OID: " + codigo + "\n");
 						break;
  
 					default:
