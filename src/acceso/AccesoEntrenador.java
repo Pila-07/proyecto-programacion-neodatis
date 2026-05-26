@@ -53,6 +53,22 @@ public class AccesoEntrenador {
 		}
 
 	}
+	
+	public static Entrenador consultarEntrenadorPorOID(int codigo)
+            throws ODBRuntimeException {
+        ODB odb = null;
+        try {
+            odb = ODBFactory.open("data\\futbol.db");
+            OID oid = OIDFactory.buildObjectOID(codigo);
+            Entrenador entrenador = (Entrenador) odb.getObjectFromId(oid);
+            return entrenador;
+        } finally {
+            if (odb != null) {
+                odb.close();
+            }
+        }
+    }
+
 
 	public static void eliminarEntrenador(int codigo) throws ODBRuntimeException {
 		ODB odb = null;
@@ -63,7 +79,6 @@ public class AccesoEntrenador {
 			Entrenador entrenador = (Entrenador) odb.getObjectFromId(oid);
 			odb.delete(entrenador);
 		}
-
 		finally {
 			if (odb != null) {
 				odb.close();

@@ -45,6 +45,21 @@ public class AccesoEquipo {
 		}
 	}
 	
+	public static Equipo consultarEquipoPorOID(int codigo)
+            throws ODBRuntimeException {
+        ODB odb = null;
+        try {
+            odb = ODBFactory.open("data\\futbol.db");
+            OID oid = OIDFactory.buildObjectOID(codigo);
+            Equipo equipo = (Equipo) odb.getObjectFromId(oid);
+            return equipo;
+        } finally {
+            if (odb != null) {
+                odb.close();
+            }
+        }
+    }
+	
 	public static int eliminarEquipo(int codigo) throws ODBRuntimeException{
 		ODB odb = null;
 		OID oid = null;
