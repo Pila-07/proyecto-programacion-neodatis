@@ -17,7 +17,6 @@ import org.neodatis.odb.core.query.criteria.Where;
 import org.neodatis.odb.impl.core.query.criteria.CriteriaQuery;
 
 import modelo.Entrenador;
-import modelo.Estadio;
 
 public class AccesoEntrenador {
 
@@ -68,8 +67,29 @@ public class AccesoEntrenador {
 	        }
 	        return mapa;
 	    } finally {
-	        if (odb != null) odb.close();
+	        if (odb != null) {
+	        	odb.close();
+	        }
 	    }
+	}
+
+	public static List <Entrenador> consultarEntrenadorPorSalario(Double salario) throws ODBRuntimeException {
+		ODB odb = null;
+		List <Entrenador> listaEntrenadores = new ArrayList <Entrenador>();
+		try {
+			odb = ODBFactory.open("data\\futbol.db");
+			ICriterion criterio = Where.ge("salario", salario);
+			IQuery consulta = new CriteriaQuery(Entrenador.class, criterio);
+			Objects<Entrenador> coleccionEntrenadores = odb.getObjects(consulta);			
+			while (coleccionEntrenadores.hasNext()) {
+				listaEntrenadores.add(coleccionEntrenadores.next());
+			}
+			return listaEntrenadores;
+		}finally {
+			if(odb != null) {
+				odb.close();
+			}
+		}
 	}
 	
 	public static void eliminarEntrenador(int codigo) throws ODBRuntimeException {
@@ -107,23 +127,15 @@ public class AccesoEntrenador {
 		}
 	}
 	
-	public static List <Entrenador> consultarEntrenadorPorSalario(Double salario) throws ODBRuntimeException {
-		ODB odb = null;
-		List <Entrenador> listaEntrenadores = new ArrayList <Entrenador>();
-		try {
-			odb = ODBFactory.open("data\\futbol.db");
-			ICriterion criterio = Where.ge("salario", salario);
-			IQuery consulta = new CriteriaQuery(Entrenador.class, criterio);
-			Objects<Entrenador> coleccionEntrenadores = odb.getObjects(consulta);			
-			while (coleccionEntrenadores.hasNext()) {
-				listaEntrenadores.add(coleccionEntrenadores.next());
-			}
-			return listaEntrenadores;
-		}finally {
-			if(odb!=null) {
-				odb.close();
-			}
-		}
+	public static boolean estaVacia() throws ODBRuntimeException {
+	    ODB odb = null;
+	    try {
+	        odb = ODBFactory.open("data\\futbol.db");
+	        Objects<Entrenador> col = odb.getObjects(Entrenador.class);
+	        return !col.hasNext();
+	    } finally {
+	        if (odb != null) odb.close();
+	    }
 	}
 
 }

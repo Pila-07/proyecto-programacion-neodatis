@@ -13,7 +13,11 @@ import entrada.Teclado;
 import modelo.Entrenador;
 import modelo.Equipo;
 import modelo.Estadio;
- 
+/**
+*@author Alejandro Pila Solano
+*@author Lizer Tortosa Pguillem
+*@author Valeria Sola Sanjuan
+*/
 public class Principal {
  
 	private static void menu() {
@@ -29,6 +33,23 @@ public class Principal {
 		System.out.println("(1) Entrenador.");
 		System.out.println("(2) Equipo.");
 		System.out.println("(3) Estadio.");
+	}
+	
+	private static void poblarDB() throws ODBRuntimeException{
+	    // Entrenadores
+	    int oidAncelotti = AccesoEntrenador.insertarEntrenador(new Entrenador("Carlo Ancelotti", 320, 85082.99));
+	    int oidFlick     = AccesoEntrenador.insertarEntrenador(new Entrenador("Hansi Flick", 180, 72705.72));
+	    int oidSimeone   = AccesoEntrenador.insertarEntrenador(new Entrenador("Diego Simeone", 280, 90002.02));
+
+	    // Equipos
+	    int oidRealMadrid = AccesoEquipo.insertarEquipo("Real Madrid", 1902, 36, oidAncelotti);
+	    int oidBarcelona  = AccesoEquipo.insertarEquipo("FC Barcelona", 1899, 27, oidFlick);
+	    int oidAtleti     = AccesoEquipo.insertarEquipo("Atlético Madrid", 1903, 11, oidSimeone);
+
+	    // Estadios
+	    AccesoEstadio.insertarEstadio("Santiago Bernabéu", "Madrid", 81044, oidRealMadrid);
+	    AccesoEstadio.insertarEstadio("Spotify Camp Nou", "Barcelona", 99354, oidBarcelona);
+	    AccesoEstadio.insertarEstadio("Riyadh Air Metropolitano", "Madrid", 68456, oidAtleti);
 	}
  
 	public static void main(String[] args) {
@@ -47,7 +68,17 @@ public class Principal {
 		int codigoEntrenador = 0;
 		int codigoEquipo = 0;
 		double salario;
- 
+		
+		try {
+		    if (AccesoEntrenador.estaVacia()) {
+		    	System.out.println("Poblando DB con datos de ejemplo...");
+		        poblarDB();
+		        System.out.println("DB poblada.\n");
+		    }
+		} catch (ODBRuntimeException e) {
+		    System.out.println("Error al comprobar la base de datos: " + e.getMessage());
+		}
+		
 		do {
 			menu();
 			opcion = Teclado.leerEntero("Elige una opción (0-4): ");
@@ -57,7 +88,7 @@ public class Principal {
 				case 0:
 					System.out.println("Programa finalizado.");
 					break;
-				case 1:
+				case 1: //INSERTAR
 					menuClases();
 					opcionClase = Teclado.leerEntero("Elige una opción (0-3): ");
 					switch (opcionClase) {
@@ -130,7 +161,7 @@ public class Principal {
 						System.err.println("Opción no válida.\n");
 					}
 					break;
-				case 2:
+				case 2: //CONSULTAR
 					menuClases();
 					System.out.println("(4) Consultar estadio por equipo.");
 					System.out.println("(5) Consultar entrenadores por salario.");
@@ -175,7 +206,7 @@ public class Principal {
 							System.out.println();
 						}
 						break;
-					case 4:
+					case 4: // Consultar Estadios por Equipos
 						mapaEquipos = AccesoEquipo.consultarEquiposConOID();
 						if (!mapaEquipos.isEmpty()) {
 							System.out.println("\nEquipos disponibles:");
@@ -202,7 +233,7 @@ public class Principal {
 									+ "Inserte un nuevo registro para continuar.\n");
 						}
 						break;
-					case 5:
+					case 5: // Consultar Entrenadores por Salario
 						salario = Teclado.leerReal("Salario: ");
 						listaEntrenadores = AccesoEntrenador.consultarEntrenadorPorSalario(salario);
 						if (listaEntrenadores.isEmpty()) {
@@ -220,7 +251,7 @@ public class Principal {
 						System.err.println("Opción no válida.\n");
 					}
 					break;
-				case 3:
+				case 3: //MODIFICAR
 					menuClases();
 					opcionClase = Teclado.leerEntero("Elige una opción (0-3): ");
 					switch (opcionClase) {
@@ -336,7 +367,7 @@ public class Principal {
 						System.err.println("Opción no válida.\n");
 					}
 					break;
-				case 4:
+				case 4: //ELIMINAR
 					menuClases();
 					opcionClase = Teclado.leerEntero("Elige una opción (0-3): ");
 					switch (opcionClase) {

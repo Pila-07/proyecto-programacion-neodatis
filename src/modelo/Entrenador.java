@@ -16,7 +16,7 @@ public class Entrenador {
 	@Override
 	public String toString() {
 		return "Entrenador [Nombre = " + nombre + ", Partidos Ganados = " + 
-				partidosGanados + ", Salario = " + String.format("%.2f", salario) + "]";
+				partidosGanados + ", Salario = " + String.format("%.2f€", salario) + "]";
 	}
 
 	public String getNombre() {
